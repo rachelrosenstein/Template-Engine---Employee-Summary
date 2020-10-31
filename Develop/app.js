@@ -10,7 +10,78 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const teamMembers = [];
 
+createTeam();
+
+function createTeam() {
+    inquirer.prompt([{
+        message: "Enter team member's name",
+        name: "name"
+    },
+    {
+        type: "list",
+        message: "Select team member's role",
+        choices: [
+            "Engineer",
+            "Intern",
+            "Manager",
+        ],
+        name: "role"
+    },
+    {
+        message: "Enter team member's id",
+        name: "id"
+    },
+    {
+        message: "Enter team member's email address",
+        name: "email"
+    }])
+
+        .then(function ({ name, role, id, email }) {
+            let roleName = "";
+            if (role === "Engineer") {
+                roleName = "Github username";
+            }
+            else if (role === "Intern") {
+                roleName = "School Name";
+            }
+            else {
+                roleName = "Office Phone Number";
+            }
+
+            inquirer.prompt({
+                message: `Enter Team Member's ${roleName}`,
+                name: "roleName"
+            },
+                {
+                    Type: "list",
+                    name: "addMembers",
+                    messge: "Would you like to add a New Team Member?",
+                    choices: [
+                        "yes",
+                        "no"
+                    ],
+                })
+                .then(function ({ roleName, AddMember }) {
+                    let newMember = "";
+
+                    if (role === "Engineer") {
+                        newMember = new Engineer(name, id, email, roleName);
+                    } else if (role === "Intern") {
+                        newMember = new Intern(name, id, email, roleName);
+                    } else {
+                        newMember = new Manager(name, id, email, roleName);
+                    }
+                    teamMembers.push(newMember);
+                    console.log(teamMembers);
+                    if (AddMember === "yes") {
+                        createTeam();
+                    };
+                }
+                );
+        });
+};
 
 
 // Write code to use inquirer to gather information about the development team members,
